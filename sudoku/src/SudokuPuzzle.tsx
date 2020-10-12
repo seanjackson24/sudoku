@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { solver, SudokuPossibility } from "./solver";
 interface SudokuPuzzleProps {
     puzzle: SudokuOption[];
 }
 export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
     const { puzzle } = props;
+    const [possibilities, setPossibilities] = useState<SudokuPossibility[]>([]);
+
+    useEffect(() => setPossibilities(solver(puzzle)));
+
     let wholePuzzle: JSX.Element[] = [];
     for (let row = 0; row < 9; row++) {
         wholePuzzle[row] = <PuzzleRow startIndex={row * 9} puzzle={puzzle} />;
