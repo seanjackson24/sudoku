@@ -52,3 +52,11 @@ input[type="text"] {
 .item:nth-child(n+73) {
   border-bottom-width: 3px;
 }
+
+.possibility {
+  font-size: 10px;
+}
+
+.possibility.single {
+  color: red;
+}
