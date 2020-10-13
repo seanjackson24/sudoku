@@ -60,3 +60,7 @@ input[type="text"] {
 .possibility.single {
   color: red;
 }
+
+.given .possibility.single {
+  display: none;
+}

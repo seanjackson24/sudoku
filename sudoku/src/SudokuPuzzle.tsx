@@ -7,7 +7,7 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
     const { puzzle } = props;
     const [possibilities, setPossibilities] = useState<SudokuPossibility[]>([]);
 
-    useEffect(() => setPossibilities(solver(puzzle)), []);
+    useEffect(() => setPossibilities(solver(puzzle)), [puzzle]);
 
     let wholePuzzle: JSX.Element[] = [];
     for (let row = 0; row < 9; row++) {
@@ -52,8 +52,9 @@ interface ItemOption {
 }
 const PuzzleItem: React.FC<ItemOption> = (props) => {
     const { item, possibilities } = props;
+    const className = item === null ? "" : "given";
     return (
-        <div className="item">
+        <div className={`item ${className}`}>
             <div className="item-inner">
                 <Possibilities possibilities={possibilities} />
                 {item === null ? <input type="text" /> : <label>{item}</label>}
