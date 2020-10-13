@@ -86,6 +86,7 @@ function App() {
         6,
         null,
     ];
+
     return (
         <div className="App">
             <SudokuPuzzle puzzle={puzzle} />

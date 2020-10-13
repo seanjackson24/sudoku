@@ -1,3 +1,8 @@
+/* body,
+input {
+  background-color: #aaa;
+} */
+
 .puzzle {
   margin: 10px auto;
   width: 730px;
@@ -59,8 +64,19 @@ input[type="text"] {
 
 .possibility.single {
   color: red;
+  font-size: 30px;
+  margin: auto;
 }
+
+/* .possibility.single+input,
+.possibility.single+label {
+  display: none;
+} */
 
 .given .possibility.single {
   display: none;
+}
+
+.solved {
+  color: purple;
 }

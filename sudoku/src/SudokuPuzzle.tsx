@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { solver, SudokuPossibility } from "./solver";
+import { finder, solver, SudokuPossibility } from "./solver";
+import { useAltKeyPress } from "./useKeyPress";
 interface SudokuPuzzleProps {
     puzzle: SudokuOption[];
 }
 export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
     const { puzzle } = props;
     const [possibilities, setPossibilities] = useState<SudokuPossibility[]>([]);
+    const [solved, setSolved] = useState<SudokuOption[]>([]);
 
-    useEffect(() => setPossibilities(solver(puzzle)), [puzzle]);
+    useEffect(() => setPossibilities(finder(puzzle)), [puzzle]);
+    useAltKeyPress(
+        "s",
+        () => {
+            const attempts: SudokuOption[] = [];
+            const result = solver(possibilities, attempts);
+            console.log(result);
+            if (result) {
+                setSolved(attempts);
+            }
+        },
+        [possibilities]
+    ); // todo: dep
 
     let wholePuzzle: JSX.Element[] = [];
     for (let row = 0; row < 9; row++) {
         const possibilitiesForRow = possibilities.filter(
+            (val, index) => Math.floor(index / 9) === row
+        );
+        const solvedForRow = solved.filter(
             (val, index) => Math.floor(index / 9) === row
         );
         wholePuzzle[row] = (
@@ -19,6 +36,7 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
                 startIndex={row * 9}
                 puzzle={puzzle}
                 possibilities={possibilitiesForRow}
+                solved={solvedForRow}
             />
         );
     }
@@ -30,16 +48,19 @@ interface Row {
     startIndex: number;
     puzzle: SudokuOption[];
     possibilities: SudokuPossibility[];
+    solved: SudokuOption[];
 }
 const PuzzleRow: React.FC<Row> = (row) => {
-    const { startIndex, puzzle, possibilities } = row;
+    const { startIndex, puzzle, possibilities, solved } = row;
     let items: JSX.Element[] = [];
     for (let col = 0; col < 9; col++) {
         const possibilitiesForItem = possibilities[col];
+        const solvedForItem = solved[col];
         items[col] = (
             <PuzzleItem
                 item={puzzle[startIndex + col]}
                 possibilities={possibilitiesForItem}
+                solved={solvedForItem}
             />
         );
     }
@@ -49,15 +70,32 @@ const PuzzleRow: React.FC<Row> = (row) => {
 interface ItemOption {
     item: SudokuOption;
     possibilities: SudokuPossibility;
+    solved: SudokuOption;
 }
 const PuzzleItem: React.FC<ItemOption> = (props) => {
-    const { item, possibilities } = props;
-    const className = item === null ? "" : "given";
+    const { item, possibilities, solved } = props;
+    let className = "";
+
+    // todo: tidy
+    let r: JSX.Element = <></>;
+    if (item !== null) {
+        className = "given";
+        r = <label>{item}</label>;
+    } else {
+        if (solved !== undefined) {
+            console.log(solved);
+            className = "solved";
+            r = <label>{solved}</label>;
+        } else {
+            r = <input type="text" />;
+        }
+    }
+
     return (
         <div className={`item ${className}`}>
             <div className="item-inner">
                 <Possibilities possibilities={possibilities} />
-                {item === null ? <input type="text" /> : <label>{item}</label>}
+                {r}
             </div>
         </div>
     );
