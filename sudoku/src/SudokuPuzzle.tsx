@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { finder, solver, SudokuPossibility } from "./solver";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { placeMustBes } from "./placeMustBes";
+import { finder, getFilteredPossibilities, solver } from "./solver";
+import { SudokuOption, SudokuPossibility } from "./Types";
 import { useAltKeyPress } from "./useKeyPress";
 interface SudokuPuzzleProps {
     puzzle: SudokuOption[];
@@ -10,17 +12,31 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
     const [solved, setSolved] = useState<SudokuOption[]>([]);
 
     useEffect(() => setPossibilities(finder(puzzle)), [puzzle]);
+
+    useAltKeyPress(
+        "c",
+        useCallback(() => {
+            const p = getFilteredPossibilities(possibilities);
+            setPossibilities([...p]);
+        }, [puzzle, possibilities])
+    );
+    useAltKeyPress(
+        "x",
+        useCallback(() => {
+            const p = placeMustBes(possibilities);
+            setPossibilities([...p]);
+        }, [puzzle, possibilities])
+    );
     useAltKeyPress(
         "s",
-        () => {
+        useCallback(() => {
             const attempts: SudokuOption[] = [];
             const result = solver(possibilities, attempts);
             console.log(result);
             if (result) {
                 setSolved(attempts);
             }
-        },
-        [possibilities]
+        }, [puzzle, possibilities])
     ); // todo: dep
 
     let wholePuzzle: JSX.Element[] = [];
@@ -33,6 +49,7 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
         );
         wholePuzzle[row] = (
             <PuzzleRow
+                key={"row_" + row}
                 startIndex={row * 9}
                 puzzle={puzzle}
                 possibilities={possibilitiesForRow}
@@ -43,7 +60,6 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
 
     return <div className="puzzle">{wholePuzzle}</div>;
 };
-export type SudokuOption = number | null;
 interface Row {
     startIndex: number;
     puzzle: SudokuOption[];
@@ -58,6 +74,7 @@ const PuzzleRow: React.FC<Row> = (row) => {
         const solvedForItem = solved[col];
         items[col] = (
             <PuzzleItem
+                key={startIndex + col}
                 item={puzzle[startIndex + col]}
                 possibilities={possibilitiesForItem}
                 solved={solvedForItem}

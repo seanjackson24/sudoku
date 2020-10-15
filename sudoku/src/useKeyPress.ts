@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react";
 
-export const useAltKeyPress = (
-    targetKey: string,
-    callback: () => void,
-    deps?: React.DependencyList
-) => {
+export const useAltKeyPress = (targetKey: string, callback: () => void) => {
     const [keyPressed, setKeyPressed] = useState(false);
 
     function downHandler(event: KeyboardEvent) {
         const { key, altKey } = event;
         if (key === targetKey && altKey) {
-            setKeyPressed(true);
+            // setKeyPressed(true);
             callback();
         }
     }
@@ -18,7 +14,7 @@ export const useAltKeyPress = (
     const upHandler = (event: KeyboardEvent) => {
         const { key, altKey } = event;
         if (key === targetKey) {
-            setKeyPressed(false);
+            // setKeyPressed(false);
         }
     };
 
@@ -30,7 +26,7 @@ export const useAltKeyPress = (
             window.removeEventListener("keydown", downHandler);
             window.removeEventListener("keyup", upHandler);
         };
-    }, deps); // Empty array ensures that effect is only run on mount and unmount
+    }, [callback]); // Empty array ensures that effect is only run on mount and unmount
 
     return keyPressed;
 };
