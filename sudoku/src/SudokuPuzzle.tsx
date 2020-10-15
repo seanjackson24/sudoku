@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { placeMustBes } from "./placeMustBes";
-import { finder, getFilteredPossibilities, solver } from "./solver";
-import { SudokuOption, SudokuPossibility } from "./Types";
+import {
+    placeDefaultPossibilities,
+    getFilteredPossibilities,
+} from "./logic/getFilteredPossibilities";
+import { placeMustBes } from "./logic/placeMustBes";
+import { bruteForceSolver } from "./logic/solver";
+import { SudokuOption, SudokuPossibility } from "./logic/Types";
 import { useAltKeyPress } from "./useKeyPress";
 interface SudokuPuzzleProps {
     puzzle: SudokuOption[];
@@ -11,7 +15,9 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
     const [possibilities, setPossibilities] = useState<SudokuPossibility[]>([]);
     const [solved, setSolved] = useState<SudokuOption[]>([]);
 
-    useEffect(() => setPossibilities(finder(puzzle)), [puzzle]);
+    useEffect(() => setPossibilities(placeDefaultPossibilities(puzzle)), [
+        puzzle,
+    ]);
 
     useAltKeyPress(
         "c",
@@ -31,13 +37,13 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
         "s",
         useCallback(() => {
             const attempts: SudokuOption[] = [];
-            const result = solver(possibilities, attempts);
+            const result = bruteForceSolver(possibilities, attempts);
             console.log(result);
             if (result) {
                 setSolved(attempts);
             }
         }, [puzzle, possibilities])
-    ); // todo: dep
+    );
 
     let wholePuzzle: JSX.Element[] = [];
     for (let row = 0; row < 9; row++) {
