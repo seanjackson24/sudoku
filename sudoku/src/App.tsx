@@ -342,6 +342,90 @@ function App() {
         null,
     ];
 
+    const puzzle5 = [
+        8,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        3,
+        6,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        7,
+        null,
+        null,
+        9,
+        null,
+        2,
+        null,
+        null,
+        null,
+        5,
+        null,
+        null,
+        null,
+        7,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        4,
+        5,
+        7,
+        null,
+        null,
+        null,
+        null,
+        null,
+        1,
+        null,
+        null,
+        null,
+        3,
+        null,
+        null,
+        null,
+        1,
+        null,
+        null,
+        null,
+        null,
+        6,
+        8,
+        null,
+        null,
+        8,
+        5,
+        null,
+        null,
+        null,
+        1,
+        null,
+        null,
+        9,
+        null,
+        null,
+        null,
+        null,
+        4,
+        null,
+        null,
+    ];
+
     const [puzzle, setPuzzle] = useState(puzzle1);
     useAltKeyPress(
         "1",
@@ -369,6 +453,13 @@ function App() {
         useCallback(() => {
             setPuzzle(puzzle4);
             setPuzzleId(4);
+        }, [])
+    );
+    useAltKeyPress(
+        "5",
+        useCallback(() => {
+            setPuzzle(puzzle5);
+            setPuzzleId(5);
         }, [])
     );
     return (

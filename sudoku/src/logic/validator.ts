@@ -11,7 +11,7 @@ export const rowValid = (
         const placedOption =
             attempts[rowNumber * 9 + i] ?? possibilities[rowNumber * 9 + i];
         if (typeof placedOption !== "number") {
-            continue;
+            continue; // TODO: check if the placedOption minus anything used so far is empty set (forward checking)
         }
         if (thisRow.includes(placedOption)) {
             return false;

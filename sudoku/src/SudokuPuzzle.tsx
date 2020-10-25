@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
     placeDefaultPossibilities,
     getFilteredPossibilities,
 } from "./logic/getFilteredPossibilities";
-import { placeMustBes } from "./logic/placeMustBes";
 import { bruteForceSolver } from "./logic/solver";
 import { SudokuOption, SudokuPossibility } from "./logic/Types";
 import { useAltKeyPress } from "./useKeyPress";
@@ -26,18 +25,31 @@ export const SudokuPuzzle: React.FC<SudokuPuzzleProps> = (props) => {
             setPossibilities([...p]);
         }, [puzzle, possibilities])
     );
-    useAltKeyPress(
-        "x",
-        useCallback(() => {
-            const p = placeMustBes(possibilities);
-            setPossibilities([...p]);
-        }, [puzzle, possibilities])
-    );
+
     useAltKeyPress(
         "s",
         useCallback(() => {
             const attempts: SudokuOption[] = [];
-            const result = bruteForceSolver(possibilities, attempts);
+            let indx = possibilities.findIndex(
+                (p) => typeof p !== "number" && p.length == 2
+            );
+            indx = indx === -1 ? 0 : indx;
+            // fail fast (variable selection)
+            const getNextIndex = (index: number): number => (index + 1) % 81;
+            const currentIndex = 0;
+            // const currentIndex = lengths.find((pi) => pi.p > 1)?.i;
+            // const getNextIndex = (index: number): number =>
+            // lengths.find((pi) => pi.i > index)?.i ?? 0;
+
+            const d = new Date();
+            const result = bruteForceSolver(
+                possibilities,
+                attempts,
+                getNextIndex,
+                currentIndex
+            );
+            const end = new Date();
+            console.log(end.getTime() - d.getTime());
             console.log(result);
             if (result) {
                 setSolved(attempts);
@@ -106,7 +118,6 @@ const PuzzleItem: React.FC<ItemOption> = (props) => {
         r = <label>{item}</label>;
     } else {
         if (solved !== undefined) {
-            console.log(solved);
             className = "solved";
             r = <label>{solved}</label>;
         } else {
